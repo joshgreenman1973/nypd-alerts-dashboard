@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The NYPD press feed, 2026</title>
+<link rel="stylesheet" href="https://use.typekit.net/qqk2vto.css">
+<style>
+@font-face{
+  font-family:"GascogneTS";
+  src:url("https://vital-city-nyc.github.io/vital-city-design-system/fonts/GascogneTS-Light.ttf") format("truetype");
+  font-weight:300;font-style:normal;font-display:swap;
+}
+:root{
+  --vc-black:#050507; --vc-cloud:#dddddd; --vc-paper:#f7f7f4; --vc-charcoal:#707175;
+  --vc-cerulean:#217ebe; --vc-orange:#ff7c53; --vc-magenta:#e7466d; --vc-maroon:#7a1f2b;
+  --vc-navy:#141b2e;
+  --sans:"halyard-text","Helvetica Neue",Arial,sans-serif;
+  --serif:"GascogneTS",Georgia,serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:#fff;color:var(--vc-black);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;line-height:1.45;}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 20px 80px;}
+a{color:var(--vc-cerulean);}
+.kicker{font-family:var(--sans);font-weight:700;font-size:.74rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--vc-magenta);margin:0 0 14px;}
+h1.hero{font-family:var(--serif);font-weight:300;font-size:3.1rem;line-height:1.02;margin:0 0 16px;
+  letter-spacing:-.01em;}
+.standfirst{font-size:1.12rem;color:#2a2a2c;max-width:70ch;margin:0 0 8px;font-weight:300;}
+.standfirst b{font-weight:700;}
+.meta-line{font-size:.85rem;color:var(--vc-charcoal);margin:14px 0 0;}
+/* stats strip */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--vc-black);
+  background:var(--vc-paper);margin:30px 0 8px;}
+.stat{padding:18px 16px;border-right:1px solid var(--vc-cloud);}
+.stat:last-child{border-right:none;}
+.stat .num{font-family:var(--serif);font-weight:300;font-size:2.25rem;line-height:1;color:var(--vc-black);}
+.stat .lbl{font-size:.8rem;color:var(--vc-charcoal);margin-top:8px;line-height:1.3;}
+/* cards */
+.card{border:1px solid var(--vc-black);background:#fff;padding:22px 22px 20px;margin:22px 0;}
+.card h2{font-family:var(--sans);font-weight:800;font-size:1.32rem;line-height:1.2;margin:0 0 4px;
+  color:var(--vc-black);}
+.card .dek{font-size:.9rem;color:var(--vc-charcoal);margin:0 0 18px;font-weight:300;}
+.card .dek b{font-weight:700;color:#3a3a3c;}
+/* bars */
+.bars{display:flex;flex-direction:column;gap:9px;}
+.row{display:grid;grid-template-columns:150px 1fr 52px;align-items:center;gap:12px;font-size:.85rem;}
+.row .name{text-align:right;color:#2a2a2c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.track{background:var(--vc-paper);height:22px;position:relative;}
+.fill{height:22px;background:var(--vc-magenta);}
+.row .val{font-variant-numeric:tabular-nums;color:var(--vc-charcoal);font-size:.82rem;}
+/* vertical bar chart */
+.vbars{display:flex;align-items:flex-end;gap:10px;height:220px;padding-top:10px;border-bottom:1px solid var(--vc-cloud);}
+.vcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;}
+.vbar-stack{width:100%;max-width:56px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;}
+.vbar{width:100%;background:var(--vc-orange);}
+.vbar.crime{background:var(--vc-magenta);}
+.vaxis{display:flex;gap:10px;margin-top:7px;}
+.vlabel{flex:1;text-align:center;font-size:.8rem;color:var(--vc-charcoal);}
+.vlabel .m{font-weight:700;color:#2a2a2c;display:block;}
+.hours{display:flex;align-items:flex-end;gap:3px;height:130px;border-bottom:1px solid var(--vc-cloud);}
+.hcol{flex:1;background:var(--vc-cerulean);min-height:2px;}
+.hours-axis{display:flex;justify-content:space-between;font-size:.72rem;color:var(--vc-charcoal);margin-top:6px;}
+.toggle{display:inline-flex;gap:0;border:1px solid var(--vc-black);margin:0 0 16px;font-size:.78rem;}
+.toggle button{background:#fff;border:none;padding:6px 12px;cursor:pointer;font-family:var(--sans);
+  color:var(--vc-charcoal);border-right:1px solid var(--vc-black);}
+.toggle button:last-child{border-right:none;}
+.toggle button.on{background:var(--vc-black);color:#fff;}
+.legend{display:flex;gap:18px;font-size:.8rem;color:var(--vc-charcoal);margin:14px 0 0;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.swatch{width:12px;height:12px;display:inline-block;}
+/* callout */
+.callout{border:1px solid var(--vc-black);border-left:6px solid var(--vc-magenta);background:var(--vc-paper);
+  padding:20px 22px;margin:22px 0;}
+.callout h2{font-family:var(--sans);font-weight:800;font-size:1.2rem;margin:0 0 8px;}
+.callout p{margin:0 0 10px;font-size:.92rem;color:#2a2a2c;}
+.callout .big{font-family:var(--serif);font-weight:300;font-size:2.4rem;color:var(--vc-magenta);
+  line-height:1;margin-right:10px;}
+.arrestwrap{display:flex;gap:26px;align-items:center;flex-wrap:wrap;}
+.arrestwrap .figure{flex:0 0 auto;}
+/* methodology + caution */
+.section-head{font-family:var(--sans);font-weight:800;font-size:1.05rem;margin:44px 0 10px;
+  border-top:1px solid var(--vc-black);padding-top:16px;}
+.method{font-size:.86rem;color:#3a3a3c;}
+.method li{margin:0 0 8px;}
+.method b{color:var(--vc-black);}
+.caution-btn{background:var(--vc-maroon);color:#fff;border:none;padding:9px 14px;font-family:var(--sans);
+  font-weight:700;font-size:.82rem;cursor:pointer;margin-top:10px;}
+.caution-pop{display:none;background:var(--vc-navy);color:#fff;padding:18px 20px;margin-top:10px;
+  font-size:.85rem;line-height:1.5;max-width:75ch;}
+.caution-pop.show{display:block;}
+.caution-pop b{color:#fff;}
+footer{margin-top:40px;font-size:.8rem;color:var(--vc-charcoal);border-top:1px solid var(--vc-cloud);padding-top:16px;}
+@media(max-width:680px){
+  h1.hero{font-size:2.15rem;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .stat:nth-child(2){border-right:none;}
+  .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--vc-cloud);}
+  .row{grid-template-columns:104px 1fr 40px;font-size:.8rem;gap:8px;}
+  .vbars{height:180px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NYPD press office · Jan–Jul 2026</p>
+  <h1 class="hero">What the NYPD's press office put out in 2026</h1>
+  <p class="standfirst">Every alert the NYPD's Deputy Commissioner of Public Information emailed out in the first half of <b>2026</b> — <b id="s-total">—</b> messages in <b id="s-days">—</b> days — parsed into a searchable record of what the department chose to tell the public, precinct by precinct.</p>
+  <p class="meta-line" id="daterange">—</p>
+
+  <div class="stats" id="stats"></div>
+
+  <!-- monthly -->
+  <div class="card">
+    <h2>The press office issued about 13 alerts a day, at a steady clip all year</h2>
+    <p class="dek">Total messages per month. Crime advisories (per-incident alerts) shown against everything else — public schedules, logistics, press releases. <b>July is a partial month.</b></p>
+    <div class="toggle" id="mtoggle">
+      <button data-mode="all" class="on">All messages</button>
+      <button data-mode="crime">Crime advisories only</button>
+      <button data-mode="original">Original incidents only</button>
+    </div>
+    <div class="vbars" id="monthly"></div>
+    <div class="vaxis" id="monthly-axis"></div>
+    <div class="legend"><span><i class="swatch" style="background:var(--vc-magenta)"></i>Crime advisory</span><span><i class="swatch" style="background:var(--vc-orange)"></i>Administrative</span></div>
+  </div>
+
+  <!-- offense -->
+  <div class="card">
+    <h2>More than a third of every alert is a missing-persons case</h2>
+    <p class="dek">Crime advisories by offense type, as labeled in the NYPD's own subject line. <b>See the caution on homicides below.</b></p>
+    <div class="bars" id="offense"></div>
+  </div>
+
+  <!-- borough -->
+  <div class="card">
+    <h2>The Bronx generates more alerts than any other borough</h2>
+    <p class="dek">Crime advisories mapped to a borough from the reporting precinct. Transit districts and housing commands are counted separately.</p>
+    <div class="bars" id="borough"></div>
+  </div>
+
+  <!-- precincts -->
+  <div class="card">
+    <h2>Four Bronx precincts lead the city in alert volume</h2>
+    <p class="dek">Top 15 commands by number of crime advisories issued.</p>
+    <div class="bars" id="precincts"></div>
+  </div>
+
+  <!-- arrest follow-through -->
+  <div class="callout">
+    <div class="arrestwrap">
+      <div class="figure"><span class="big" id="arrest-rate">—</span></div>
+      <div>
+        <h2>The feed announces an arrest for only about 1 in 17 alerts</h2>
+        <p>Of <b id="arrest-orig">—</b> original advisories carrying a trackable case number, just <b id="arrest-ever">—</b> later got an "arrest made" update in this feed — a median of <b id="arrest-days">—</b> days afterward. This measures <b>what the press office re-advises</b>, not how many cases police actually clear; most arrests never get a press update, so this is a floor, not a clearance rate.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- hour -->
+  <div class="card">
+    <h2>Alerts land all day, but cluster in the evening</h2>
+    <p class="dek">When messages hit the feed, by hour of day. A real overnight tail runs from midnight to 3 a.m.</p>
+    <div class="hours" id="hours"></div>
+    <div class="hours-axis"><span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>11p</span></div>
+  </div>
+
+  <!-- homicide caution -->
+  <div class="callout" style="border-left-color:var(--vc-maroon);">
+    <h2>Read the homicide count with care</h2>
+    <p>The feed carries <b id="hom-adv">—</b> alerts labeled "Homicide," but that is <b>not a murder count</b>. Only <b id="hom-rma">—</b> carry a 2026 case number; <b id="hom-upd">—</b> are follow-up updates (victim IDs, arrests, added media) re-advising incidents already in the feed, and the "Homicide" label is the department's initial framing — it includes deaths later ruled non-criminal. Reading it as a body count would contradict the NYPD's own July 2 announcement of record-low murders for the first half of 2026. Every offense label here is a press-office subject line, not a verified crime classification.</p>
+  </div>
+
+  <!-- methodology -->
+  <h3 class="section-head">How this was built</h3>
+  <ul class="method">
+    <li><b>Source.</b> Every email from the NYPD Deputy Commissioner of Public Information (DCPI.DCPI@nypd.org) piped into a Slack channel, Jan 1 through Jul 4 2026. One message per email.</li>
+    <li><b>What is counted.</b> Each row is one press message. "Crime advisories" are per-incident alerts; "original incidents" strip out follow-up updates. Fields (precinct, offense, case number, update/arrest/pattern flags) were parsed from each email's subject line.</li>
+    <li><b>Completeness check.</b> The NYPD's own sequential case numbers (RMA) run contiguously from 1 to 1,653 across the period with no gaps, confirming the full year-to-date series was captured. One out-of-range number (1982) is a source typo, kept verbatim.</li>
+    <li><b>Boroughs</b> are inferred from precinct number (1–34 Manhattan, 40–52 Bronx, 60–94 Brooklyn, 100–115 Queens, 120–123 Staten Island); transit and housing commands are shown separately.</li>
+    <li><b>Limitations.</b> Labels are the department's, not independently verified. Arrest follow-through reflects press behavior, not case clearances. No arrestee or victim names are included in this dataset.</li>
+  </ul>
+
+  <button class="caution-btn" id="cbtn">And please read this AI caution.</button>
+  <div class="caution-pop" id="cpop">
+    Everything substantive here — the concept, the decision to structure the NYPD press feed, and the framing of every chart — was handled by a human author. The coding, parsing and file work were primarily in the hands of Anthropic's Claude and Claude Code, under close direction. Quality-control measures actually performed on this project: the department's own sequential case numbers were cross-checked for gaps to confirm the year-to-date series is complete (1 through 1,653, contiguous); the homicide figure was interrogated against the NYPD's record-low-murders announcement and is flagged rather than presented as a body count; offense and borough groupings were derived by transparent rule from the raw subject lines; and no personal identifying information was carried into the dataset. Nevertheless, the risks of using AI remain — labels are the department's own and were not independently verified — and we would be especially grateful to learn of any red flags you notice.
+  </div>
+
+  <footer>
+    Data pulled <span id="pulled">—</span> from the NYPD DCPI press feed. Offense and borough groupings are editorial, derived from the department's subject lines. Not an official NYPD product.
+  </footer>
+</div>
+
+<script>
+const DATA = {"meta":{"total":2465,"crime":2218,"original":1798,"start":"2026-01-01","end":"2026-07-04","days":185,"avgday":13.3,"rma_max":1653},"monthly":[{"month":"Jan","all":399,"crime":359,"original":299,"partial":false},{"month":"Feb","all":358,"crime":322,"original":263,"partial":false},{"month":"Mar","all":387,"crime":343,"original":273,"partial":false},{"month":"Apr","all":399,"crime":362,"original":289,"partial":false},{"month":"May","all":453,"crime":410,"original":331,"partial":false},{"month":"Jun","all":401,"crime":359,"original":289,"partial":false},{"month":"Jul","all":68,"crime":63,"original":54,"partial":true}],"offense":[{"name":"Missing person","count":793},{"name":"Assault","count":359},{"name":"Robbery","count":336},{"name":"Homicide","count":230},{"name":"Forcible touching","count":89},{"name":"Grand larceny","count":87},{"name":"Pattern / unspecified","count":69},{"name":"Burglary","count":53},{"name":"Reckless endangerment","count":49},{"name":"Collision / traffic","count":25},{"name":"Sexual abuse","count":24},{"name":"DOA / death investigation","count":22},{"name":"Rape","count":16},{"name":"Public lewdness","count":9},{"name":"Criminal mischief","count":8},{"name":"Menacing","count":8},{"name":"Child endangerment","count":5},{"name":"Hate crime","count":5},{"name":"Arson","count":3},{"name":"Shooting","count":3},{"name":"Kidnapping","count":3},{"name":"Strangulation","count":3},{"name":"Luring Of A Child","count":3},{"name":"Empire State Building Incident","count":2},{"name":"Unlawful Imprisonment","count":2},{"name":"Shots Fired","count":2},{"name":"Unidentified Individual","count":2},{"name":"Custodial Interference","count":2},{"name":"Unlawful surveillance","count":1},{"name":"Shot Fired","count":1},{"name":"Investigate Aided","count":1},{"name":"Rma 1072-26","count":1},{"name":"Sex Crimes Pattern","count":1},{"name":"Disseminating Indecent Material","count":1}],"boroughs":[{"name":"Bronx","count":740},{"name":"Brooklyn","count":449},{"name":"Queens","count":357},{"name":"Manhattan","count":248},{"name":"Transit","count":215},{"name":"Other / citywide","count":89},{"name":"Staten Island","count":83},{"name":"Housing (PSA)","count":37}],"precincts":[{"unit":"44 Pct","count":137,"borough":"Bronx"},{"unit":"43 Pct","count":98,"borough":"Bronx"},{"unit":"52 Pct","count":83,"borough":"Bronx"},{"unit":"40 Pct","count":78,"borough":"Bronx"},{"unit":"109 Pct","count":71,"borough":"Queens"},{"unit":"42 Pct","count":55,"borough":"Bronx"},{"unit":"46 Pct","count":55,"borough":"Bronx"},{"unit":"121 Pct","count":51,"borough":"Staten Island"},{"unit":"50 Pct","count":51,"borough":"Bronx"},{"unit":"47 Pct","count":49,"borough":"Bronx"},{"unit":"67 Pct","count":46,"borough":"Brooklyn"},{"unit":"49 Pct","count":42,"borough":"Bronx"},{"unit":"103 Pct","count":42,"borough":"Queens"},{"unit":"60 Pct","count":38,"borough":"Brooklyn"},{"unit":"102 Pct","count":36,"borough":"Queens"},{"unit":"61 Pct","count":34,"borough":"Brooklyn"},{"unit":"110 Pct","count":32,"borough":"Queens"},{"unit":"41 Pct","count":30,"borough":"Bronx"},{"unit":"66 Pct","count":29,"borough":"Brooklyn"},{"unit":"48 Pct","count":28,"borough":"Bronx"}],"hour":[{"hour":0,"count":76},{"hour":1,"count":63},{"hour":2,"count":64},{"hour":3,"count":77},{"hour":4,"count":28},{"hour":5,"count":34},{"hour":6,"count":23},{"hour":7,"count":43},{"hour":8,"count":34},{"hour":9,"count":62},{"hour":10,"count":62},{"hour":11,"count":90},{"hour":12,"count":124},{"hour":13,"count":140},{"hour":14,"count":150},{"hour":15,"count":128},{"hour":16,"count":134},{"hour":17,"count":180},{"hour":18,"count":175},{"hour":19,"count":173},{"hour":20,"count":189},{"hour":21,"count":167},{"hour":22,"count":132},{"hour":23,"count":117}],"arrest":{"orig_rma":1597,"ever_arrest":94,"rate":5.9,"median_days":7.1,"within72":38,"matched":106},"daily":[{"date":"2026-01-01","count":7},{"date":"2026-01-02","count":11},{"date":"2026-01-03","count":3},{"date":"2026-01-04","count":4},{"date":"2026-01-05","count":12},{"date":"2026-01-06","count":16},{"date":"2026-01-07","count":14},{"date":"2026-01-08","count":11},{"date":"2026-01-09","count":20},{"date":"2026-01-10","count":11},{"date":"2026-01-11","count":9},{"date":"2026-01-12","count":5},{"date":"2026-01-13","count":19},{"date":"2026-01-14","count":21},{"date":"2026-01-15","count":22},{"date":"2026-01-16","count":17},{"date":"2026-01-17","count":11},{"date":"2026-01-18","count":12},{"date":"2026-01-19","count":10},{"date":"2026-01-20","count":24},{"date":"2026-01-21","count":22},{"date":"2026-01-22","count":21},{"date":"2026-01-23","count":9},{"date":"2026-01-24","count":6},{"date":"2026-01-25","count":8},{"date":"2026-01-26","count":11},{"date":"2026-01-27","count":15},{"date":"2026-01-28","count":19},{"date":"2026-01-29","count":8},{"date":"2026-01-30","count":12},{"date":"2026-01-31","count":9},{"date":"2026-02-01","count":12},{"date":"2026-02-02","count":10},{"date":"2026-02-03","count":12},{"date":"2026-02-04","count":16},{"date":"2026-02-05","count":15},{"date":"2026-02-06","count":19},{"date":"2026-02-07","count":11},{"date":"2026-02-08","count":4},{"date":"2026-02-09","count":10},{"date":"2026-02-10","count":15},{"date":"2026-02-11","count":21},{"date":"2026-02-12","count":21},{"date":"2026-02-13","count":11},{"date":"2026-02-14","count":12},{"date":"2026-02-15","count":11},{"date":"2026-02-16","count":4},{"date":"2026-02-17","count":16},{"date":"2026-02-18","count":14},{"date":"2026-02-19","count":14},{"date":"2026-02-20","count":10},{"date":"2026-02-21","count":10},{"date":"2026-02-22","count":4},{"date":"2026-02-23","count":5},{"date":"2026-02-24","count":17},{"date":"2026-02-25","count":27},{"date":"2026-02-26","count":12},{"date":"2026-02-27","count":15},{"date":"2026-02-28","count":10},{"date":"2026-03-01","count":6},{"date":"2026-03-02","count":12},{"date":"2026-03-03","count":19},{"date":"2026-03-04","count":11},{"date":"2026-03-05","count":15},{"date":"2026-03-06","count":15},{"date":"2026-03-07","count":10},{"date":"2026-03-08","count":17},{"date":"2026-03-09","count":5},{"date":"2026-03-10","count":18},{"date":"2026-03-11","count":26},{"date":"2026-03-12","count":17},{"date":"2026-03-13","count":16},{"date":"2026-03-14","count":7},{"date":"2026-03-15","count":7},{"date":"2026-03-16","count":2},{"date":"2026-03-17","count":14},{"date":"2026-03-18","count":14},{"date":"2026-03-19","count":17},{"date":"2026-03-20","count":11},{"date":"2026-03-21","count":5},{"date":"2026-03-22","count":7},{"date":"2026-03-23","count":8},{"date":"2026-03-24","count":15},{"date":"2026-03-25","count":15},{"date":"2026-03-26","count":22},{"date":"2026-03-27","count":11},{"date":"2026-03-28","count":10},{"date":"2026-03-29","count":6},{"date":"2026-03-30","count":7},{"date":"2026-03-31","count":22},{"date":"2026-04-01","count":20},{"date":"2026-04-02","count":10},{"date":"2026-04-03","count":18},{"date":"2026-04-04","count":10},{"date":"2026-04-05","count":9},{"date":"2026-04-06","count":14},{"date":"2026-04-07","count":19},{"date":"2026-04-08","count":18},{"date":"2026-04-09","count":11},{"date":"2026-04-10","count":15},{"date":"2026-04-11","count":2},{"date":"2026-04-12","count":6},{"date":"2026-04-13","count":10},{"date":"2026-04-14","count":15},{"date":"2026-04-15","count":18},{"date":"2026-04-16","count":11},{"date":"2026-04-17","count":17},{"date":"2026-04-18","count":5},{"date":"2026-04-19","count":5},{"date":"2026-04-20","count":15},{"date":"2026-04-21","count":18},{"date":"2026-04-22","count":18},{"date":"2026-04-23","count":18},{"date":"2026-04-24","count":16},{"date":"2026-04-25","count":12},{"date":"2026-04-26","count":5},{"date":"2026-04-27","count":13},{"date":"2026-04-28","count":13},{"date":"2026-04-29","count":22},{"date":"2026-04-30","count":16},{"date":"2026-05-01","count":11},{"date":"2026-05-02","count":11},{"date":"2026-05-03","count":8},{"date":"2026-05-04","count":12},{"date":"2026-05-05","count":22},{"date":"2026-05-06","count":18},{"date":"2026-05-07","count":21},{"date":"2026-05-08","count":22},{"date":"2026-05-09","count":14},{"date":"2026-05-10","count":9},{"date":"2026-05-11","count":11},{"date":"2026-05-12","count":23},{"date":"2026-05-13","count":21},{"date":"2026-05-14","count":20},{"date":"2026-05-15","count":18},{"date":"2026-05-16","count":7},{"date":"2026-05-17","count":10},{"date":"2026-05-18","count":5},{"date":"2026-05-19","count":26},{"date":"2026-05-20","count":12},{"date":"2026-05-21","count":17},{"date":"2026-05-22","count":20},{"date":"2026-05-23","count":6},{"date":"2026-05-24","count":13},{"date":"2026-05-25","count":11},{"date":"2026-05-26","count":7},{"date":"2026-05-27","count":22},{"date":"2026-05-28","count":18},{"date":"2026-05-29","count":20},{"date":"2026-05-30","count":10},{"date":"2026-05-31","count":8},{"date":"2026-06-01","count":13},{"date":"2026-06-02","count":20},{"date":"2026-06-03","count":15},{"date":"2026-06-04","count":14},{"date":"2026-06-05","count":13},{"date":"2026-06-06","count":10},{"date":"2026-06-07","count":14},{"date":"2026-06-08","count":15},{"date":"2026-06-09","count":14},{"date":"2026-06-10","count":25},{"date":"2026-06-11","count":12},{"date":"2026-06-12","count":16},{"date":"2026-06-13","count":10},{"date":"2026-06-14","count":8},{"date":"2026-06-15","count":11},{"date":"2026-06-16","count":14},{"date":"2026-06-17","count":13},{"date":"2026-06-18","count":9},{"date":"2026-06-19","count":11},{"date":"2026-06-20","count":5},{"date":"2026-06-21","count":8},{"date":"2026-06-22","count":7},{"date":"2026-06-23","count":19},{"date":"2026-06-24","count":16},{"date":"2026-06-25","count":25},{"date":"2026-06-26","count":21},{"date":"2026-06-27","count":10},{"date":"2026-06-28","count":8},{"date":"2026-06-29","count":10},{"date":"2026-06-30","count":15},{"date":"2026-07-01","count":27},{"date":"2026-07-02","count":23},{"date":"2026-07-03","count":12},{"date":"2026-07-04","count":6}],"homicide":{"advisories":231,"with_rma":22,"updates":100},"pattern":{"messages":98,"unique":82},"found":110};
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString('en-US');
+
+// ---- fill text ----
+$('#s-total').textContent = fmt(DATA.meta.total);
+$('#s-days').textContent = DATA.meta.days;
+$('#daterange').textContent = `${DATA.meta.total.toLocaleString()} messages · ${DATA.meta.start} to ${DATA.meta.end} · sequential case numbers 1–${fmt(DATA.meta.rma_max)}`;
+$('#pulled').textContent = DATA.meta.end;
+
+// ---- stats strip ----
+const stats = [
+  {num: fmt(DATA.meta.crime), lbl:'per-incident crime advisories'},
+  {num: DATA.meta.avgday, lbl:'messages a day, on average'},
+  {num: DATA.found, lbl:'missing people marked found'},
+  {num: DATA.arrest.rate+'%', lbl:'of alerts get an arrest update'},
+];
+$('#stats').innerHTML = stats.map(s=>`<div class="stat"><div class="num">${s.num}</div><div class="lbl">${s.lbl}</div></div>`).join('');
+
+// ---- horizontal bars ----
+function hbars(el, items, key, valkey, color){
+  const max = Math.max(...items.map(i=>i[valkey]));
+  el.innerHTML = items.map(i=>{
+    const w = (i[valkey]/max*100).toFixed(1);
+    return `<div class="row"><div class="name" title="${i[key]}">${i[key]}</div>
+      <div class="track"><div class="fill" style="width:${w}%;background:${color}"></div></div>
+      <div class="val">${fmt(i[valkey])}</div></div>`;
+  }).join('');
+}
+hbars($('#offense'), DATA.offense.slice(0,12), 'name','count','var(--vc-magenta)');
+hbars($('#borough'), DATA.boroughs, 'name','count','var(--vc-orange)');
+hbars($('#precincts'), DATA.precincts.slice(0,15), 'unit','count','var(--vc-cerulean)');
+
+// ---- monthly vertical bars ----
+let mmode='all';
+function drawMonthly(){
+  const el=$('#monthly'), ax=$('#monthly-axis');
+  const max=Math.max(...DATA.monthly.map(m=>m.all));
+  el.innerHTML = DATA.monthly.map(m=>{
+    let html='';
+    if(mmode==='all'){
+      const crimeH=(m.crime/max*100), adminH=((m.all-m.crime)/max*100);
+      html=`<div class="vbar" style="height:${adminH}%;background:var(--vc-orange)"></div>
+            <div class="vbar crime" style="height:${crimeH}%"></div>`;
+    } else {
+      const v=m[mmode], h=(v/max*100);
+      html=`<div class="vbar crime" style="height:${h}%"></div>`;
+    }
+    const total = mmode==='all'? m.all : m[mmode];
+    return `<div class="vcol"><div style="font-size:.72rem;color:var(--vc-charcoal);font-variant-numeric:tabular-nums">${total}${m.partial?'*':''}</div>
+      <div class="vbar-stack">${html}</div></div>`;
+  }).join('');
+  ax.innerHTML = DATA.monthly.map(m=>`<div class="vlabel"><span class="m">${m.month}</span></div>`).join('');
+}
+drawMonthly();
+$('#mtoggle').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  mmode=e.target.dataset.mode;
+  [...$('#mtoggle').children].forEach(b=>b.classList.toggle('on',b===e.target));
+  drawMonthly();
+});
+
+// ---- hours ----
+const hmax=Math.max(...DATA.hour.map(h=>h.count));
+$('#hours').innerHTML = DATA.hour.map(h=>`<div class="hcol" style="height:${(h.count/hmax*100).toFixed(1)}%" title="${h.hour}:00 — ${h.count}"></div>`).join('');
+
+// ---- arrest ----
+$('#arrest-rate').textContent = DATA.arrest.rate+'%';
+$('#arrest-orig').textContent = fmt(DATA.arrest.orig_rma);
+$('#arrest-ever').textContent = DATA.arrest.ever_arrest;
+$('#arrest-days').textContent = DATA.arrest.median_days;
+
+// ---- homicide ----
+$('#hom-adv').textContent = DATA.homicide.advisories;
+$('#hom-rma').textContent = DATA.homicide.with_rma;
+$('#hom-upd').textContent = DATA.homicide.updates;
+
+// ---- caution ----
+$('#cbtn').addEventListener('click',()=>$('#cpop').classList.toggle('show'));
+</script>
+</body>
+</html>
