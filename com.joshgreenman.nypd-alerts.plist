@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Daily NYPD alerts dashboard refresh. Install:
+       cp com.joshgreenman.nypd-alerts.plist ~/Library/LaunchAgents/
+       launchctl load ~/Library/LaunchAgents/com.joshgreenman.nypd-alerts.plist
+     Runs daily at 07:00 local. Manual run:
+       launchctl kickstart -k gui/$(id -u)/com.joshgreenman.nypd-alerts -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.joshgreenman.nypd-alerts</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/joshgreenman/Experiments/nypd-alerts-dashboard/pull_and_deploy.sh</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>7</integer>
+    <key>Minute</key><integer>0</integer>
+  </dict>
+  <key>WorkingDirectory</key>
+  <string>/Users/joshgreenman/Experiments/nypd-alerts-dashboard</string>
+  <key>StandardOutPath</key>
+  <string>/Users/joshgreenman/Experiments/nypd-alerts-dashboard/logs/launchd.out</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/joshgreenman/Experiments/nypd-alerts-dashboard/logs/launchd.err</string>
+</dict>
+</plist>
